@@ -24,7 +24,7 @@ plot_single_variable <- function(
   )
   
   # ----------------------------
-  # Histogramm (xlab manuell!)
+  # Histogramm
   # ----------------------------
   hist(
     x,
@@ -37,16 +37,15 @@ plot_single_variable <- function(
     cex.axis = 0.8
   )
   
-  # Zentrierte x-Achsenbeschriftung NUR fürs Histogramm
   mtext(
     xlab_hist_manual,
     side = 1,
     line = 2,
-    adj = 0    # <-- linksbündig
+    adj = 0
   )
   
   # ----------------------------
-  # Boxplot (ylab manuell!)
+  # Boxplot
   # ----------------------------
   boxplot(
     x,
@@ -54,12 +53,11 @@ plot_single_variable <- function(
     ylab = "",
     col = "lightblue",
     border = "darkblue",
-    notch = TRUE,
+    notch = FALSE,
     cex.axis = 0.8,
     las = 1
   )
   
-  # Manuelle y-Achsenbeschriftung (links vom Boxplot)
   mtext(
     ylab_manual,
     side = 2,
@@ -68,7 +66,7 @@ plot_single_variable <- function(
   )
   
   # ----------------------------
-  # Haupttitel (oben)
+  # Haupttitel
   # ----------------------------
   mtext(
     main_title,
@@ -80,7 +78,7 @@ plot_single_variable <- function(
   )
   
   # ----------------------------
-  # Skalen-/Kodierungshinweis (unten, global)
+  # Skalenhinweis
   # ----------------------------
   mtext(
     xlab_long,
@@ -94,9 +92,39 @@ plot_single_variable <- function(
 }
 
 # ============================================================
-# Q5.1 – NOMINAL (bewusst ungeeignet)
+# Funktion: Säulendiagramm (nominal / ordinal)
 # ============================================================
 
+plot_bar_variable <- function(
+    x,
+    main_title,
+    xlab,
+    ylab,
+    labels = NULL
+) {
+  
+  freq <- table(x)
+  
+  par(mar = c(5, 5, 4, 2))
+  
+  barplot(
+    freq,
+    col = "lightblue",
+    border = "white",
+    main = main_title,
+    xlab = xlab,
+    ylab = ylab,
+    names.arg = labels,
+    cex.axis = 0.8,
+    cex.names = 0.8
+  )
+}
+
+# ============================================================
+# Q5.1 – NOMINAL
+# ============================================================
+
+# Histogramm + Boxplot (bewusst methodisch problematisch, aber reflektiert)
 plot_single_variable(
   x = na.omit(data$Q5.1),
   main_title =
@@ -108,10 +136,20 @@ plot_single_variable(
     "Antwortkategorie\n(nominal, keine Rangordnung)"
 )
 
+# Säulendiagramm (korrekt für nominale Variable)
+plot_bar_variable(
+  x = na.omit(data$Q5.1),
+  main_title = "Q5.1: Selbständigkeit der Eltern (Säulendiagramm)",
+  xlab = "Antwortkategorie",
+  ylab = "Häufigkeit",
+  labels = c("No", "Yes father", "Yes mother", "Yes both")
+)
+
 # ============================================================
-# Q6.2_1 – ORDINAL (korrekt)
+# Q6.2_1 – ORDINAL
 # ============================================================
 
+# Histogramm + Boxplot
 plot_single_variable(
   x = na.omit(data$Q6.2_1),
   main_title =
@@ -121,4 +159,13 @@ plot_single_variable(
     "Skala: 1 = sehr negativ, 7 = sehr positiv",
   ylab_manual =
     "Reaktion\n(1 = sehr negativ, 7 = sehr positiv)"
+)
+
+# Säulendiagramm (ordinal → Verteilung)
+plot_bar_variable(
+  x = na.omit(data$Q6.2_1),
+  main_title = "Q6.2_1: Reaktion der Familie (Säulendiagramm)",
+  xlab = "Reaktion",
+  ylab = "Häufigkeit",
+  labels = 1:7
 )

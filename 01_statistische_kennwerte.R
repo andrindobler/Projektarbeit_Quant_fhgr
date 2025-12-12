@@ -1,7 +1,16 @@
+
+
+# =========================
+# Daten laden
+# =========================
+
 library(openxlsx)
 
-# Daten einlesen
-guess <- read.xlsx("GUESSS.xlsx", sheet = 1)
+file <- "GUESSS.xlsx"
+stopifnot(file.exists(file))
+
+guess <- read.xlsx(file, sheet = 1)
+
 
 # Relevante Variablen auswählen
 data <- guess[, c("Q6.2_1", "Q5.1")]
