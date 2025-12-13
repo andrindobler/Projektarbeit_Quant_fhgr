@@ -1,171 +1,195 @@
-# ============================================================
-# Vorbereitung
-# ============================================================
+# =========================
+# Pakete
+# =========================
+library(openxlsx)
 
-data$Q5.1   <- as.numeric(data$Q5.1)
-data$Q6.2_1 <- as.numeric(data$Q6.2_1)
+# =========================
+# Daten laden
+# =========================
+file <- "GUESSS.xlsx"
+stopifnot(file.exists(file))
 
-# ============================================================
-# Funktion: Histogramm + Boxplot (voll kontrolliertes Layout)
-# ============================================================
+guess <- read.xlsx(file, sheet = 1)
 
-plot_single_variable <- function(
-    x,
-    main_title,
-    xlab_hist_manual,
-    xlab_long,
-    ylab_manual
-) {
+# =========================
+# Plot-Layout (Ränder)
+# =========================
+par(mar = c(6, 7, 4, 2) + 0.1)
+
+# =========================
+# Farben
+# =========================
+
+my_color <- "#6A5ACD"
+
+# =========================
+# Variablen definieren
+# =========================
+ordinal_vars <- c(
+  "Q4.1.1_2",
+  "Q6.2_1",
+  "Q11.6.2_1",
+  "Q11.6.2_2",
+  "Q11.6.2_3"
+)
+
+nominal_var <- "Q5.1"
+
+# =========================
+# Typen umwandeln
+# =========================
+guess[ordinal_vars] <- lapply(guess[ordinal_vars], as.numeric)
+guess[[nominal_var]] <- as.factor(guess[[nominal_var]])
+
+# =========================
+# X-Achsen-Beschriftung (ordinal)
+# =========================
+get_xlab_ordinal <- function(var_name) {
+  if (var_name == "Q6.2_1") {
+    "Ausprägung\n(1 = very negatively, 7 = very positively)"
+  } else {
+    "Ausprägung\n(1 = strongly disagree, 7 = strongly agree)"
+  }
+}
+
+# =========================
+# Ordinale Variablen
+# Boxplots & Histogramme
+# =========================
+for (var in ordinal_vars) {
   
-  par(
-    mfrow = c(1, 2),
-    mar = c(4, 5, 4, 2),
-    oma = c(4, 0, 6, 0)
-  )
+  x <- guess[[var]]
+  xlab_text <- get_xlab_ordinal(var)
   
-  # ----------------------------
-  # Histogramm
-  # ----------------------------
-  hist(
-    x,
-    breaks = 7,
-    freq = FALSE,
-    col = "lightblue",
-    border = "white",
-    main = "Histogramm",
-    xlab = "",
-    cex.axis = 0.8
-  )
-  
-  mtext(
-    xlab_hist_manual,
-    side = 1,
-    line = 2,
-    adj = 0
-  )
-  
-  # ----------------------------
-  # Boxplot
-  # ----------------------------
+  ## Boxplot
   boxplot(
     x,
-    main = "Boxplot",
-    ylab = "",
-    col = "lightblue",
-    border = "darkblue",
-    notch = FALSE,
-    cex.axis = 0.8,
-    las = 1
+    main = paste("Boxplot von", var),
+    ylab = xlab_text,
+    ylim = c(1, 7.5),
+    col = my_color
   )
   
-  mtext(
-    ylab_manual,
-    side = 2,
-    line = 4,
-    cex = 0.9
-  )
-  
-  # ----------------------------
-  # Haupttitel
-  # ----------------------------
-  mtext(
-    main_title,
-    outer = TRUE,
-    side = 3,
-    line = 3,
-    cex = 1.05,
-    font = 2
-  )
-  
-  # ----------------------------
-  # Skalenhinweis
-  # ----------------------------
-  mtext(
-    xlab_long,
-    outer = TRUE,
-    side = 1,
-    line = 1,
-    cex = 0.85
-  )
-  
-  par(mfrow = c(1, 1))
-}
-
-# ============================================================
-# Funktion: Säulendiagramm (nominal / ordinal)
-# ============================================================
-
-plot_bar_variable <- function(
+  ## Histogramm vorbereiten
+  h <- hist(
     x,
-    main_title,
-    xlab,
-    ylab,
-    labels = NULL
-) {
+    breaks = seq(0.5, 7.5, by = 1),
+    plot = FALSE
+  )
   
-  freq <- table(x)
+  ## Histogramm (ohne automatische y-Achse)
+  hist(
+    x,
+    breaks = seq(0.5, 7.5, by = 1),
+    main = paste("Histogramm von", var),
+    xlab = xlab_text,
+    ylab = "Dichte",
+    xlim = c(0.5, 7.5),
+    ylim = c(0, max(h$density) * 1.25),
+    col = my_color,
+    border = "gray60",
+    freq = FALSE,
+    yaxt = "n"
+  )
   
-  par(mar = c(5, 5, 4, 2))
+  ## Einheitliche y-Achse (2 Dezimalstellen)
+  axis(
+    side = 2,
+    at = pretty(c(0, max(h$density) * 1.25)),
+    labels = formatC(
+      pretty(c(0, max(h$density) * 1.25)),
+      format = "f",
+      digits = 2
+    )
+  )
   
-  barplot(
-    freq,
-    col = "lightblue",
-    border = "white",
-    main = main_title,
-    xlab = xlab,
-    ylab = ylab,
-    names.arg = labels,
-    cex.axis = 0.8,
-    cex.names = 0.8
+  ## Dichtewerte über Balken
+  text(
+    x = h$mids,
+    y = h$density,
+    label = ifelse(h$density > 0, round(h$density, 2), ""),
+    pos = 3,
+    cex = 0.8
   )
 }
 
-# ============================================================
-# Q5.1 – NOMINAL
-# ============================================================
+# =========================
+# Nominale Variable Q5.1
+# Säulen- & Balkendiagramm
+# =========================
 
-# Histogramm + Boxplot (bewusst methodisch problematisch, aber reflektiert)
-plot_single_variable(
-  x = na.omit(data$Q5.1),
-  main_title =
-    "Q5.1: Selbständigkeit der Eltern\n(nominale Variable – metrische Darstellung problematisch)",
-  xlab_hist_manual = "Antwortkategorie",
-  xlab_long =
-    "Kodierung: 0 = No, 1 = Yes father, 2 = Yes mother, 3 = Yes both",
-  ylab_manual =
-    "Antwortkategorie\n(nominal, keine Rangordnung)"
+freq_Q5.1 <- table(guess[[nominal_var]])
+max_freq  <- max(freq_Q5.1) * 1.3
+
+labels_Q5 <- c(
+  "No",
+  "Yes, father",
+  "Yes, mother",
+  "Yes, both"
 )
 
-# Säulendiagramm (korrekt für nominale Variable)
-plot_bar_variable(
-  x = na.omit(data$Q5.1),
-  main_title = "Q5.1: Selbständigkeit der Eltern (Säulendiagramm)",
-  xlab = "Antwortkategorie",
+## Säulendiagramm (vertikal)
+bp_vert <- barplot(
+  freq_Q5.1,
+  main = "Säulendiagramm von Q5.1",
+  xlab = "Kategorie",
   ylab = "Häufigkeit",
-  labels = c("No", "Yes father", "Yes mother", "Yes both")
+  ylim = c(0, max_freq),
+  col = my_color,
+  names.arg = labels_Q5
 )
 
-# ============================================================
-# Q6.2_1 – ORDINAL
-# ============================================================
-
-# Histogramm + Boxplot
-plot_single_variable(
-  x = na.omit(data$Q6.2_1),
-  main_title =
-    "Q6.2_1: Reaktion der Familie\n(ordinal skalierte Bewertung)",
-  xlab_hist_manual = "Reaktion",
-  xlab_long =
-    "Skala: 1 = sehr negativ, 7 = sehr positiv",
-  ylab_manual =
-    "Reaktion\n(1 = sehr negativ, 7 = sehr positiv)"
+text(
+  x = bp_vert,
+  y = freq_Q5.1,
+  label = freq_Q5.1,
+  pos = 3,
+  cex = 0.9
 )
 
-# Säulendiagramm (ordinal → Verteilung)
-plot_bar_variable(
-  x = na.omit(data$Q6.2_1),
-  main_title = "Q6.2_1: Reaktion der Familie (Säulendiagramm)",
-  xlab = "Reaktion",
-  ylab = "Häufigkeit",
-  labels = 1:7
+# -------------------------
+# Balkendiagramm Q5.1
+# -------------------------
+
+# Grössere linke Margin nur für diesen Plot
+par(mar = c(5, 9, 4, 2) + 0.1)
+
+freq_Q5.1 <- table(guess[[nominal_var]])
+max_freq  <- max(freq_Q5.1) * 1.3
+
+labels_Q5 <- c(
+  "No",
+  "Yes, father",
+  "Yes, mother",
+  "Yes, both"
+)
+
+bp_horiz <- barplot(
+  freq_Q5.1,
+  horiz = TRUE,
+  main = "Balkendiagramm von Q5.1",
+  xlab = "Häufigkeit",
+  ylab = "",                 # ylab leer lassen!
+  xlim = c(0, max_freq),
+  col = my_color,
+  names.arg = labels_Q5,
+  las = 1,                   # horizontale Labels
+  cex.names = 0.9            # gut lesbar, aber nicht dominant
+)
+
+# ylabel manuell und sauber links platzieren
+mtext(
+  "Kategorie",
+  side = 2,
+  line = 6,
+  cex = 1
+)
+
+# Werte neben Balken
+text(
+  x = freq_Q5.1,
+  y = bp_horiz,
+  label = freq_Q5.1,
+  pos = 4,
+  cex = 0.9
 )
