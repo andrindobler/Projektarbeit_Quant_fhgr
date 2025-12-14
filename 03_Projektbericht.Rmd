@@ -1,16 +1,66 @@
 ---
 title: "03_Projektbericht"
 author: "Andrin Dobler, Joel Jonischus"
-date: "2025-12-13"
-output: html_document
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: flatly
+    toc: true
+    toc_depth: 3 # up to three levels
+    toc_float: true # table of contents on left
+    number_sections: true # number sections
+fontsize: 11pt
+geometry: margin=2.5cm
 ---
 
+**Kurs:** Quantitative Research Methods, HS25  
+**Team / Autor:innen:** Andrin Dobler, Joel Jonischus  
+**Projekt:** Unternehmerisch geprägt? Familiäre Einflüsse auf Gründungsabsichten nach dem Studium  
+**Repository** <https://github.com/andrindobler/Projektarbeit_Quant_fhgr>
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+
+library(openxlsx)
+
+# für Gruppenvergleiche
+library(dplyr)   
+
+guess <- read.xlsx("GUESSS.xlsx", sheet = 1)
+
 ```
 
-## R Markdown
+```{r plot-functions, include=FALSE}
+plot_bar_variable <- function(x, main_title, xlab, ylab, labels) {
+  counts <- table(x)
+  barplot(counts,
+          col = "lightblue", border = "white",
+          main = main_title, xlab = xlab, ylab = ylab,
+          names.arg = labels, las = 1)
+}
+```
+  
 
+## Einleitung und Fragestellung
+
+Inwiefern beeinflussen familiäre Faktoren die Gründungsabsichten von Absolventinnen und Absolventen fünf Jahre nach Studienabschluss?
+
+
+```{r fig-q5-1-barplot, fig.cap="Verteilung der Selbständigkeit der Eltern (Q5.1)"}
+plot_bar_variable(
+  x = guess$Q5.1,
+  main_title = "Q5.1: Selbständigkeit der Eltern",
+  xlab = "Antwortkategorie",
+  ylab = "Häufigkeit",
+  labels = c("No", "Yes father", "Yes mother", "Yes both")
+)
+```
+  
+  
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
