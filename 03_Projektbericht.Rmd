@@ -25,56 +25,31 @@ knitr::opts_chunk$set(
   warning = FALSE
 )
 
+#libraries
 library(openxlsx)
+library(dplyr)
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(plotly)
 
-# für Gruppenvergleiche
-library(dplyr)   
-
+#Access to data set
 guess <- read.xlsx("GUESSS.xlsx", sheet = 1)
 
+#Data sources
+source("scripts/stat_kennwerte.R")
+source("scripts/graphs.R")
+
 ```
 
-```{r plot-functions, include=FALSE}
-plot_bar_variable <- function(x, main_title, xlab, ylab, labels) {
-  counts <- table(x)
-  barplot(counts,
-          col = "lightblue", border = "white",
-          main = main_title, xlab = xlab, ylab = ylab,
-          names.arg = labels, las = 1)
-}
-```
+# 1 Einleitung und Fragestellung
+
+Ob Studierende eine unternehmerische Laufbahn in Betracht ziehen, hängt nicht allein von individuellen Interessen oder Bildungsangeboten ab, sondern wird auch durch ihr soziales Umfeld geprägt. Insbesondere das familiäre Umfeld kann früh unternehmerische Denkweisen, Rollenbilder und Risikoeinstellungen vermitteln. Die GUESSS-Studie „Studentisches Unternehmertum in der Schweiz 2018“ bietet eine fundierte empirische Grundlage, um diesen Zusammenhang näher zu beleuchten. Im folgenden Abschnitt wird daher der Frage nachgegangen, ob Studierende mit unternehmerischem Familienhintergrund höhere Gründungsabsichten aufweisen als ihre Kommilitoninnen und Kommilitonen ohne einen solchen Hintergrund.
   
+# 2 Wie beeinflusst die von Studierenden erwartete Unterstützung oder Zurückhaltung seitens ihrer Familie ihre Absicht, ein Unternehmen zu gründen?
 
-## Einleitung und Fragestellung
-
-Inwiefern beeinflussen familiäre Faktoren die Gründungsabsichten von Absolventinnen und Absolventen fünf Jahre nach Studienabschluss?
+Der Mittelwert der familiären Reaktion liegt bei**`r round(mean_Q6.2_1, 2)`** (SD = `r round(sd_Q6.2_1, 2)`).
 
 
-```{r fig-q5-1-barplot, fig.cap="Verteilung der Selbständigkeit der Eltern (Q5.1)"}
-plot_bar_variable(
-  x = guess$Q5.1,
-  main_title = "Q5.1: Selbständigkeit der Eltern",
-  xlab = "Antwortkategorie",
-  ylab = "Häufigkeit",
-  labels = c("No", "Yes father", "Yes mother", "Yes both")
-)
-```
-  
-  
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
