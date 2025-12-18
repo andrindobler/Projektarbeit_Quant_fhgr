@@ -1,0 +1,68 @@
+---
+title: "03_Projektbericht"
+author: "Andrin Dobler, Joel Jonischus"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: flatly
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+fontsize: 11pt
+geometry: margin=2.5cm
+---
+
+**Kurs:** Quantitative Research Methods, HS25  
+**Team / Autor:innen:** Andrin Dobler, Joel Jonischus  
+**Projekt:** Unternehmerisch geprägt? Familiäre Einflüsse auf Gründungsabsichten nach dem Studium  
+**Repository:** <https://github.com/andrindobler/Projektarbeit_Quant_fhgr>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+
+library(openxlsx)
+library(dplyr)
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(plotly)
+
+# Daten laden
+guess <- read.xlsx("GUESSS.xlsx", sheet = 1)
+
+# Externe Skripte (können guess verändern!)
+source("scripts/stat_kennwerte.R")
+source("scripts/graphs.R")
+
+# 🔧 Datentypen KORRIGIEREN – GANZ AM SCHLUSS
+ordinal_vars <- c(
+  "Q4.1.1_2",
+  "Q6.2_1",
+  "Q11.6.2_1",
+  "Q11.6.2_2",
+  "Q11.6.2_3"
+)
+
+guess[ordinal_vars] <- lapply(
+  guess[ordinal_vars],
+  function(x) suppressWarnings(as.numeric(trimws(x)))
+)
+
+```
+# Einleitung und Fragestellung
+
+Ob Studierende eine unternehmerische Laufbahn in Betracht ziehen, hängt nicht allein von individuellen Interessen oder Bildungsangeboten ab, sondern wird auch durch ihr soziales Umfeld geprägt. Insbesondere das familiäre Umfeld kann früh unternehmerische Denkweisen, Rollenbilder und Risikoeinstellungen vermitteln. Die GUESSS-Studie „Studentisches Unternehmertum in der Schweiz 2018“ bietet eine fundierte empirische Grundlage, um diesen Zusammenhang näher zu beleuchten. Im folgenden Abschnitt wird daher der Frage nachgegangen, ob Studierende mit unternehmerischem Familienhintergrund höhere Gründungsabsichten aufweisen als ihre Kommilitoninnen und Kommilitonen ohne einen solchen Hintergrund.
+
+# Antizipierte Unterstützung der Familie
+
+Der Mittelwert der familiären Reaktion liegt bei **`r round(mean_Q6.2_1, 2)`** (SD = `r round(sd_Q6.2_1, 2)`).
+
+```{r q6_2_1-plots, fig.cap="Histogramm und Boxplot der erwarteten familiären Reaktion auf eine Unternehmensgründung (Q6.2_1)", fig.width=7, fig.height=5}
+plot_box_ordinal(guess, "Q6.2_1")
+plot_hist_ordinal(guess, "Q6.2_1")
+```
