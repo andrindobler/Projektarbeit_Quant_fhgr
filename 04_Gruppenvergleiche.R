@@ -28,6 +28,7 @@ tapply(df_groups$Q4.1.1_2, df_groups$group_family_entrepreneur, summary)
 tapply(df_groups$Q4.1.1_2, df_groups$group_family_entrepreneur, sd)
 
 # Visualisierung
+plot_ttest_boxplot <- function(df_groups) {
 boxplot(Q4.1.1_2 ~ group_family_entrepreneur,
         data = df_groups,
         main = "Zusammenhangs zwischen unternehmerischem Familienhintergrund und Gründungsabsicht",
@@ -36,6 +37,8 @@ boxplot(Q4.1.1_2 ~ group_family_entrepreneur,
         col = "lightblue",
         border = "darkblue",
         notch = FALSE)
+}
+
 
 # t-Test (Welch)
 t_test_res <- t.test(Q4.1.1_2 ~ group_family_entrepreneur,
