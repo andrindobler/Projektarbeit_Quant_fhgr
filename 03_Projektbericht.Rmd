@@ -80,7 +80,9 @@ Die Ergebnisse zeigen einen signifikanten Unterschied zwischen Studierenden ohne
 Studierende mit unternehmerischem Elternhintergrund zeigten eine signifikant höhere Zustimmung zur Aussage, dass ihr berufliches Ziel darin besteht, Unternehmer:in zu werden.
 
 
-**hier t-test boxplot einfügen**
+```{r ttest-boxplot, fig.cap="Boxplot: Zusammenhangs zwischen unternehmerischem Familienhintergrund (Q5.1) und Gründungsabsicht (Q4.1.1_2)", fig.width=7, fig.height=5}
+plot_ttest_boxplot(df_groups)
+
 
 
 Methodische Reflexion:
