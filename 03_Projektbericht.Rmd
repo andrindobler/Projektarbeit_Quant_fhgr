@@ -36,8 +36,9 @@ library(plotly)
 guess <- read.xlsx("GUESSS.xlsx", sheet = 1)
 
 # Externe Skripte (können guess verändern!)
-source("scripts/stat_kennwerte.R")
-source("scripts/graphs.R")
+source("01_statistische_kennwerte.R")
+source("02_graphs.R")
+source("04_Gruppenvergleiche.R")
 
 # 🔧 Datentypen KORRIGIEREN – GANZ AM SCHLUSS
 ordinal_vars <- c(
@@ -66,3 +67,26 @@ Der Mittelwert der familiären Reaktion liegt bei **`r round(mean_Q6.2_1, 2)`** 
 plot_box_ordinal(guess, "Q6.2_1")
 plot_hist_ordinal(guess, "Q6.2_1")
 ```
+
+
+# Zusammenhang zwischen unternehmerischem Familienhintergrund und Gründungsabsicht
+
+Zur Untersuchung des Zusammenhangs zwischen unternehmerischem Familienhintergrund und Gründungsabsicht wurde ein unabhängiger t-Test durchgeführt. Dabei wurden Studierende ohne selbständige Eltern mit Studierenden verglichen, deren Eltern ganz oder teilweise selbständig sind.
+
+Die Ergebnisse zeigen einen signifikanten Unterschied zwischen Studierenden ohne unternehmerisch selbständige Eltern und solchen mit mindestens einem selbständigen Elternteil,
+
+*t*(5180.8) = −8.41, *p*< .001
+
+Studierende mit unternehmerischem Elternhintergrund zeigten eine signifikant höhere Zustimmung zur Aussage, dass ihr berufliches Ziel darin besteht, Unternehmer:in zu werden.
+
+
+**hier t-test boxplot einfügen**
+
+
+Methodische Reflexion:
+
+Obwohl Q4.1.1_2 auf einer ordinalen Likert-Skala basiert, wurde aufgrund der grossen Stichprobe ein t-Test durchgeführt. Ergänzend wurde ein nichtparametrischer Wilcoxon-Test berechnet, der zu einem vergleichbaren Ergebnis führte. Die Resultate sind daher als robust einzuschätzen.
+
+Fazit:
+
+Die Ergebnisse unterstützen die Annahme, dass familiäre Rollenvorbilder und unternehmerische Sozialisation einen Einfluss auf die beruflichen Zielvorstellungen von Studierenden haben. Ein unternehmerischer Familienhintergrund könnte dabei als frühe Form von informellem Lernen und Normvermittlung wirken.
